@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>จัดห้องนอนของฉัน (ต้นแบบ)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5F0; --card:#FFFFFF; --ink:#24262B; --muted:#6B6F76; --line:#E3E0D8;
+  --accent:#3F6E8C; --accent-soft:#E4EEF4; --bad:#B2442F; --bad-soft:#F8E6E1;
+  --warn:#9A6A12; --warn-soft:#F8EED9; --good:#3D7A4E; --good-soft:#E3F1E6; --pin:#D9822B;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.6}
+header{padding:20px 20px 8px;max-width:1180px;margin:0 auto}
+header h1{font-size:24px;font-weight:600;margin:0 0 4px}
+header p{margin:0;color:var(--muted);font-size:15px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;max-width:1180px;margin:12px auto 0;padding:0 20px;list-style:none}
+.steps li{font-size:14px;padding:6px 12px;border-radius:999px;background:#ECE9E2;color:var(--muted)}
+.steps li.on{background:var(--accent);color:#fff}
+main{max-width:1180px;margin:0 auto;padding:16px 20px 40px;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px}
+@media (max-width:900px){main{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-size:17px;font-weight:600;margin:0 0 10px}
+.card h3{font-size:15px;font-weight:600;margin:16px 0 6px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label.f{font-size:14px;color:var(--muted);display:flex;align-items:center;gap:6px}
+input[type=number]{width:76px;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 12px;border-radius:10px;cursor:pointer;min-height:40px}
+button:hover{border-color:#bdb8ad}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{background:#355d77}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #9cc3dc;outline-offset:2px}
+.palette{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.palette .grp{font-size:13px;color:var(--muted);margin-top:4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:5px 10px;border-radius:999px;font-size:14px;min-height:36px;display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.25)}
+.canvas-wrap{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:#FBFAF7;touch-action:none;overflow:hidden}
+svg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;min-height:44px;padding:8px 10px;background:#F2F0EA;border-radius:10px}
+.toolbar .name{font-weight:600;margin-right:4px}
+.hint{font-size:13px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;border-radius:0;min-height:38px}
+.seg button.on{background:var(--ink);color:#fff}
+.res{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.res li{border-radius:10px;padding:8px 10px;font-size:14px;line-height:1.5}
+.res li.bad{background:var(--bad-soft)}
+.res li.warn{background:var(--warn-soft)}
+.res li.good{background:var(--good-soft)}
+.tag{font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;margin-right:6px;white-space:nowrap}
+.bad .tag{background:var(--bad);color:#fff}.warn .tag{background:var(--warn);color:#fff}.good .tag{background:var(--good);color:#fff}
+.num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--pin);color:#fff;font-size:12px;font-weight:600;margin-right:6px}
+.ref{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+details{margin-top:6px}
+summary{cursor:pointer;font-size:13px;font-weight:500;color:var(--ink)}
+ul.fix{margin:6px 0 0;padding-left:18px;font-size:13px}
+ul.fix li{margin-bottom:4px;padding:0;background:none}
+ol.plan{padding-left:20px;margin:6px 0;font-size:14px}
+ol.plan li{margin-bottom:6px}
+.lvl{font-size:11px;background:var(--accent-soft);color:var(--accent);padding:1px 7px;border-radius:999px;margin-left:4px;white-space:nowrap}
+.note{font-size:13px;color:var(--muted);background:#F2F0EA;border-radius:10px;padding:10px 12px;margin-top:14px}
+.empty{font-size:14px;color:var(--muted)}
+.sum{font-size:15px;margin:0 0 8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>จัดห้องนอนของฉัน</h1>
+  <p>วางเฟอร์นิเจอร์ให้เหมือนห้องจริง ปรับขนาดได้ แล้วให้ระบบตรวจและเสนอการจัดใหม่ตามคู่มือ ไม่ต้องถ่ายรูปห้อง</p>
+</header>
+<ol class="steps" id="steps">
+  <li data-s="1">1 ขนาดห้อง</li><li data-s="2">2 วางของในห้อง</li><li data-s="3">3 ตรวจตามคู่มือ</li><li data-s="4">4 แบบที่แนะนำ</li>
+</ol>
+<main>
+  <section class="card">
+    <div class="row" style="justify-content:space-between">
+      <div class="row">
+        <label class="f">กว้าง (ซ้าย–ขวา) <input type="number" id="w" min="2" max="8" step="0.25" value="3"> ม.</label>
+        <label class="f">ยาว (บน–ล่าง) <input type="number" id="l" min="2" max="8" step="0.25" value="4"> ม.</label>
+      </div>
+      <div class="row">
+        <button id="demo">โหลดห้องตัวอย่าง</button>
+        <button id="clear">ล้างห้อง</button>
+      </div>
+    </div>
+    <div class="palette" id="palette"></div>
+    <details style="margin-top:10px">
+      <summary>สิ่งเร้าในห้องคืออะไร? (ดูทั้งหมด)</summary>
+      <ul class="fix" style="margin-top:8px">
+        <li><b>พื้นที่โล่ง</b> — ทางเดินหน้าประตูและข้างเตียงแคบเกินไป <span class="ref">บทที่ 9</span></li>
+        <li><b>สิ่งที่มองเห็นจากเตียง/โต๊ะ</b> — เห็นโต๊ะทำงาน ทีวี หรือกองผ้าตอนนอน <span class="ref">บทที่ 2, 7</span></li>
+        <li><b>แสงจากหน้าต่าง</b> — แสงเข้าตาตอนนอนหรือตื่น <span class="ref">บทที่ 3</span></li>
+        <li><b>ไฟ LED จากเครื่องใช้</b> — ไฟสถานะเครื่องใช้ไฟฟ้าในสายตาตอนนอน <span class="ref">บทที่ 3 · Brown et al. (2022)</span></li>
+        <li><b>เสียงดังต่อเนื่อง</b> — รถ แอร์ข้างห้อง ใกล้หัวเตียง <span class="ref">บทที่ 4</span></li>
+        <li><b>เสียงดังเป็นพัก ๆ</b> — คนคุย สัตว์ ประตู ใกล้หัวเตียง <span class="ref">บทที่ 4 · Wang et al. (2021)</span></li>
+        <li><b>จุดชาร์จมือถือใกล้เตียง</b> — เอื้อมถึงมือถือจากเตียงได้ง่าย <span class="ref">บทที่ 2 · Schrempft et al. (2024)</span></li>
+        <li><b>ความร้อน/ทิศลมแอร์</b> — ลมแอร์หรือความร้อนปะทะหัวเตียงโดยตรง <span class="ref">บทที่ 5</span></li>
+        <li><b>จุดอากาศอับ</b> — มุมที่อากาศไม่ถ่ายเทใกล้เตียง <span class="ref">บทที่ 6 · Kang et al. (2024)</span></li>
+        <li><b>จุดของกอง / ผนังสีจัดหรือลายเยอะ</b> — เห็นความรกหรือลวดลายรบกวนตาตอนนอนหรือนั่งทำงาน <span class="ref">บทที่ 7–8 · Thacher et al. (2017); Attaianese et al. (2025)</span></li>
+      </ul>
+    </details>
+    <div class="row" style="margin-top:12px;justify-content:space-between">
+      <div class="seg" id="viewseg" hidden>
+        <button data-v="before">ห้องของฉัน (ก่อน)</button><button data-v="after">แบบที่แนะนำ (หลัง)</button>
+      </div>
+      <span class="hint">ตาราง 1 ช่อง = 25 ซม.</span>
+    </div>
+    <div class="canvas-wrap"><svg id="svg" role="img" aria-label="แผนผังห้องนอน"></svg></div>
+    <div class="toolbar" id="toolbar"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="check">ตรวจห้องตามคู่มือ</button>
+      <button class="primary" id="suggest">เสนอการจัดห้องใหม่</button>
+    </div>
+    <p class="note">ต้นแบบสำหรับงานวิจัย ระบบเสนอการจัดห้องด้วยกฎจากคู่มือ ไม่ได้ใช้ AI และไม่ได้ส่งข้อมูลออกจากเครื่องของคุณ แตะของเพื่อเลือก ลากเพื่อย้าย ลากมุมสีเข้มเพื่อยืดหดขนาด หรือพิมพ์ขนาดในแถบเครื่องมือ ใช้ปุ่มลูกศรเลื่อนทีละ 5 ซม. (Shift = 25 ซม.) และกด R เพื่อหมุน ตัวเลขสีส้มบนผังคือจุดที่มีวิธีแก้โดยไม่ต้องย้ายเฟอร์นิเจอร์</p>
+  </section>
+  <aside class="card" id="panel" aria-live="polite"></aside>
+</main>
+<script>
+const TYPES={
+  bed35:{label:'เตียง 3.5 ฟุต',short:'เตียง',w:105,h:200,cat:'bed'},
+  bed5:{label:'เตียง 5 ฟุต',short:'เตียง',w:150,h:200,cat:'bed'},
+  bed6:{label:'เตียง 6 ฟุต',short:'เตียง',w:180,h:200,cat:'bed'},
+  night:{label:'โต๊ะข้างเตียง',short:'ข้างเตียง',w:45,h:40,cat:'night'},
+  tablelamp:{label:'โคมไฟตั้งโต๊ะ',short:'โคม',w:25,h:25,cat:'lamp',onTop:true},
+  desk:{label:'โต๊ะทำงาน',short:'โต๊ะ',w:120,h:60,cat:'desk'},
+  chair:{label:'เก้าอี้',short:'เก้าอี้',w:50,h:50,cat:'chair'},
+  vanity:{label:'โต๊ะเครื่องแป้ง',short:'เครื่องแป้ง',w:90,h:45,cat:'storage'},
+  sofa:{label:'โซฟา',short:'โซฟา',w:160,h:80,cat:'seat'},
+  armchair:{label:'เก้าอี้นวม',short:'เก้าอี้นวม',w:75,h:75,cat:'seat'},
+  beanbag:{label:'บีนแบ็ก',short:'บีนแบ็ก',w:80,h:80,cat:'seat'},
+  wardrobe:{label:'ตู้เสื้อผ้า',short:'ตู้เสื้อผ้า',w:120,h:60,cat:'storage',blocker:true},
+  dresser:{label:'ตู้ลิ้นชัก',short:'ลิ้นชัก',w:80,h:45,cat:'storage'},
+  bookshelf:{label:'ชั้นหนังสือสูง',short:'ชั้นหนังสือ',w:80,h:30,cat:'storage',blocker:true},
+  shelf:{label:'ชั้นวางเตี้ย (ใช้กั้นได้)',short:'ชั้นเตี้ย',w:80,h:30,cat:'part',blocker:true,partition:true},
+  divider:{label:'ม่านหรือฉากกั้นห้อง',short:'ม่านกั้น',w:150,h:10,cat:'part',blocker:true,partition:true},
+  tv:{label:'ทีวีและชั้นวางทีวี',short:'ทีวี',w:120,h:40,cat:'screen'},
+  fridge:{label:'ตู้เย็นเล็ก',short:'ตู้เย็น',w:50,h:55,cat:'fridge'},
+  floorlamp:{label:'โคมไฟตั้งพื้น',short:'โคมพื้น',w:40,h:40,cat:'lamp'},
+  rack:{label:'ราวแขวนผ้า',short:'ราวผ้า',w:100,h:45,cat:'clutter'},
+  laundry:{label:'ตะกร้าผ้า',short:'ตะกร้า',w:45,h:45,cat:'clutter'},
+  plant:{label:'ต้นไม้',short:'ต้นไม้',w:40,h:40,cat:'plant'},
+  rug:{label:'พรม',short:'พรม',w:160,h:120,cat:'rug'},
+  door:{label:'ประตูเข้าห้อง',short:'ประตู',w:90,cat:'door',kind:'wall'},
+  bathdoor:{label:'ประตูห้องน้ำ',short:'ห้องน้ำ',w:80,cat:'door',kind:'wall'},
+  window:{label:'หน้าต่าง',short:'หน้าต่าง',w:120,cat:'window',kind:'wall'},
+  ac:{label:'แอร์',short:'แอร์',w:80,cat:'ac',kind:'wall'},
+  noise:{label:'เสียงดังต่อเนื่อง (รถ แอร์ข้างห้อง)',short:'เสียง',cat:'noise',kind:'mark'},
+  noise2:{label:'เสียงดังเป็นพัก ๆ (คนคุย สัตว์ ประตู)',short:'เสียง!',cat:'noise2',kind:'mark'},
+  led:{label:'ไฟ LED จากเครื่องใช้',short:'LED',cat:'led',kind:'mark'},
+  stuffy:{label:'จุดอากาศอับ',short:'อับ',cat:'stuffy',kind:'mark'},
+  mess:{label:'จุดที่ของมักกอง',short:'กอง',cat:'mess',kind:'mark'},
+  busy:{label:'ผนังสีจัดหรือลายเยอะ',short:'ลาย',cat:'busy',kind:'mark'},
+  light:{label:'ทิศที่แสงเข้า',short:'แสง',cat:'light',kind:'mark'},
+  heat:{label:'ผนังโดนแดดร้อน',short:'ร้อน',cat:'heat',kind:'mark'},
+  charger:{label:'จุดชาร์จมือถือ',short:'ชาร์จ',cat:'charger',kind:'mark'}
+};
+const COLORS={bed:['#E3ECF6','#4A6FA5'],night:['#EFE8F5','#7D5F96'],desk:['#F3EAD9','#A07A3B'],chair:['#FAF4EA','#A07A3B'],storage:['#E4EEE2','#5E8A5A'],part:['#D7E8D3','#3F6E3B'],seat:['#F6E6EA','#A3576B'],screen:['#E1E3EA','#3D405B'],fridge:['#E3EEF1','#557A85'],clutter:['#F7EBDD','#9B6B3A'],lamp:['#FFF4CC','#B8901A'],plant:['#E2F2E2','#3F7F45'],rug:['#F1EEE8','#B6AE9F'],door:['#FFFFFF','#6B6F76'],window:['#D6E9F5','#4F8DB8'],ac:['#E9ECEF','#7B8794'],noise:['#F6D9D1','#C4583C'],noise2:['#F3D2CB','#9E3A22'],led:['#E0EEFB','#2B6CB0'],stuffy:['#E6ECE7','#5F7563'],mess:['#F3E7DA','#8C5A2B'],busy:['#F7E1F0','#A0457E'],light:['#FBEBC8','#B88A2A'],heat:['#F9DFC9','#C7652A'],charger:['#DDDFE8','#3D405B']};
+Object.values(TYPES).forEach(t=>{t.kind=t.kind||'floor';[t.fill,t.stroke]=COLORS[t.cat]});
+const GROUPS=[
+  ['เตียงและข้างเตียง',['bed35','bed5','bed6','night','tablelamp']],
+  ['โต๊ะและที่นั่ง',['desk','chair','vanity','sofa','armchair','beanbag']],
+  ['ตู้ ชั้นวาง และที่กั้น',['wardrobe','dresser','bookshelf','shelf','divider']],
+  ['เครื่องใช้และของตกแต่ง',['tv','fridge','floorlamp','rack','laundry','plant','rug']],
+  ['ประตู หน้าต่าง แอร์ (ชิดผนังอัตโนมัติ)',['door','bathdoor','window','ac']],
+  ['สิ่งเร้าในห้อง (วางตรงจุดที่เกิดจริง)',['noise','noise2','light','led','heat','stuffy','mess','busy','charger']]
+];
+const WALLNAME={top:'ผนัง ก (บน)',right:'ผนัง ข (ขวา)',bottom:'ผนัง ค (ล่าง)',left:'ผนัง ง (ซ้าย)'};
+
+/* วิธีแก้ที่ไม่ต้องย้ายเฟอร์นิเจอร์ แยกตามปัญหา: [ข้อความ, ระดับ, อ้างอิง] */
+const FIXES={
+  sees:{short:'กั้นสายตาจากโต๊ะ',opts:[['คลุมโต๊ะและจอด้วยผ้าผืนเดียวตอนเลิกงาน','ระดับ 1','บทที่ 2'],['พับโน้ตบุ๊ก ปิดจอ และเก็บเอกสารลงกล่องก่อนนอน','ระดับ 1','บทที่ 7'],['เปลี่ยนด้านหัวนอนไปอีกฝั่งของเตียง โดยไม่ต้องย้ายเตียง','ระดับ 1','บทที่ 2'],['ติดรางม่านกั้นโซนนอนกับโซนทำงาน','ระดับ 2','บทที่ 2'],['วางฉากพับหรือชั้นวางเตี้ยกั้นสายตา','ระดับ 2','บทที่ 2']]},
+  scr:{short:'ปิดจอ ปิดไฟสแตนด์บาย',opts:[['ปิดทีวีที่ปลั๊ก ไม่ให้มีไฟสแตนด์บายตอนนอน','ระดับ 1','บทที่ 3'],['คลุมจอด้วยผ้าตอนเข้านอน','ระดับ 1','บทที่ 2'],['งดดูจอ 30 นาทีก่อนนอน','ระดับ 1','บทที่ 2–3 · ชนิศา (2564)'],['ติดม่านกั้นระหว่างเตียงกับทีวี','ระดับ 2','บทที่ 2']]},
+  clu:{short:'คลุมหรือปิดฝา',opts:[['ใช้ผ้าคลุมราวผ้าหรือตะกร้า ให้มองไม่เห็นกองผ้า','ระดับ 1','บทที่ 7'],['ตั้งเวลาเก็บผ้า 5 นาทีก่อนนอนทุกคืน','ระดับ 1','บทที่ 7'],['เปลี่ยนเป็นตะกร้าหรือกล่องที่มีฝาปิด','ระดับ 2','บทที่ 7'],['ย้ายตะกร้าผ้าไปไว้ในห้องน้ำหรือนอกห้อง','ระดับ 1','บทที่ 7']]},
+  chg:{short:'ชาร์จห่างเตียง',opts:[['เปิดโหมดห้ามรบกวนตั้งเวลาทุกคืน','ระดับ 1','บทที่ 4'],['ใช้สายชาร์จที่สั้นลง จะได้หยิบมือถือจากเตียงไม่ถึง','ระดับ 1','บทที่ 2'],['ชาร์จมือถือนอกห้องนอน','ระดับ 1','บทที่ 2 · Schrempft et al. (2024)'],['ใช้นาฬิกาปลุกแทนมือถือ','ระดับ 2','บทที่ 2']]},
+  win:{short:'ม่านทึบแสง',opts:[['ติดม่านทึบแสงหรือม่านสองชั้น','ระดับ 2','บทที่ 3 · Brown et al. (2022)'],['แปะฟิล์มหรือกระดาษทึบแสงที่กระจกชั่วคราว','ระดับ 1–2','บทที่ 3'],['ติดยางกันเสียงขอบบานหน้าต่าง','ระดับ 2','บทที่ 4'],['ใช้ผ้าปิดตาตอนนอน','ระดับ 1','บทที่ 3'],['เปลี่ยนด้านหัวนอนไปปลายเตียง','ระดับ 1','บทที่ 3']]},
+  ac:{short:'ปรับทิศลมแอร์',opts:[['ปรับบานสวิงให้ลมพุ่งขึ้นเพดานหรือไปทางอื่น','ระดับ 1','บทที่ 5'],['ใช้โหมดนอนหลับ ไม่ตั้งเย็นจัด','ระดับ 1','บทที่ 5 · National Sleep Foundation (2022)'],['ติดแผ่นเบี่ยงทางลมที่ช่องลมแอร์','ระดับ 2','บทที่ 5'],['ห่มผ้าบางคลุมช่วงตัวที่โดนลม','ระดับ 1','บทที่ 5']]},
+  dl:{short:'กันแสงเสียงที่ประตู',opts:[['ม้วนผ้าขนหนูกั้นช่องใต้ประตูตอนกลางคืน','ระดับ 1','บทที่ 4'],['ติดยางกันเสียงใต้ประตูและขอบวงกบ','ระดับ 2','บทที่ 4'],['ตกลงกับคนในบ้านให้ปิดไฟทางเดินหลังเวลาหนึ่ง','ระดับ 1','บทที่ 3'],['แขวนม่านหนาหลังประตู','ระดับ 2','บทที่ 4']]},
+  nz:{short:'ที่อุดหู·เสียงกลบ',opts:[['ใช้ที่อุดหูแบบนุ่ม','ระดับ 2','บทที่ 4 · Li et al. (2022)'],['เปิดพัดลมหรือ white noise เบา ๆ กลบเสียง','ระดับ 1–2','บทที่ 4 · Messineo et al. (2017)'],['ปิดหน้าต่างช่วงเสียงดัง แล้วระบายอากาศช่วงที่เงียบกว่า','ระดับ 1','บทที่ 4 และ 6'],['แขวนผ้าห่มหนาหรือม่านที่ผนังด้านที่เสียงเข้า','ระดับ 2','บทที่ 4']]},
+  pn:{short:'กันเสียงเป็นพัก ๆ',opts:[['ใช้ที่อุดหูแบบนุ่ม เพราะเสียงกลบช่วยได้น้อยกับเสียงที่ดังขึ้นมาทันที','ระดับ 2','บทที่ 4 · Wang et al. (2021)'],['ติดยางกันเสียงที่ขอบประตูหรือหน้าต่างด้านที่เสียงเข้า','ระดับ 2','บทที่ 4'],['ตกลงเวลาเงียบกับคนในบ้านหรือเพื่อนร่วมห้อง','ระดับ 1','บทที่ 4 · Li et al. (2022)'],['แขวนม่านหนาหรือผ้าห่มที่ผนังด้านนั้น','ระดับ 2','บทที่ 4'],['ปิดเสียงแจ้งเตือนทุกเครื่องในห้อง','ระดับ 1','บทที่ 4']]},
+  led:{short:'ปิดไฟ LED',opts:[['แปะเทปทึบแสงหรือสติกเกอร์ทับไฟ LED','ระดับ 1','บทที่ 3 · Brown et al. (2022)'],['หันหน้าเครื่องใช้ไปทางอื่น ไม่ให้ไฟส่องมาที่เตียง','ระดับ 1','บทที่ 3'],['ใช้ปลั๊กพ่วงที่มีสวิตช์ ปิดทั้งแถวก่อนนอน','ระดับ 1–2','บทที่ 3'],['ใช้ผ้าปิดตาตอนนอน','ระดับ 1','บทที่ 3']]},
+  air:{short:'ระบายอากาศ',opts:[['เปิดหน้าต่างและประตู 10–15 นาที ก่อนนอนและหลังตื่น','ระดับ 1','บทที่ 6 · Fan et al. (2022)'],['เปิดประตูห้องแง้มไว้ตอนนอน ถ้าปลอดภัยและไม่มีเสียงรบกวน','ระดับ 1','บทที่ 6'],['ใช้พัดลมช่วยให้อากาศหมุนเวียนในมุมนั้น','ระดับ 1','บทที่ 6'],['ไม่ตากผ้าเปียกในห้องนอน','ระดับ 1','บทที่ 6'],['ติดพัดลมดูดอากาศที่หน้าต่าง','ระดับ 2','บทที่ 6 · Kang et al. (2024)']]},
+  mess:{short:'ให้ของมีที่อยู่',opts:[['วางกล่องหรือตะกร้ามีฝาตรงจุดนั้น ให้ของมีที่อยู่ประจำ','ระดับ 2','บทที่ 7 · Thacher et al. (2017)'],['เก็บของจุดนั้น 5 นาทีก่อนนอนทุกคืน','ระดับ 1','บทที่ 7'],['ใช้ผ้าผืนใหญ่คลุมกองของชั่วคราว','ระดับ 1','บทที่ 7'],['ย้ายของที่ไม่ได้ใช้ทุกสัปดาห์ออกจากห้องนอน','ระดับ 1','บทที่ 7']]},
+  pat:{short:'ลดสีและลาย',opts:[['ปลดโปสเตอร์หรือของแขวนออกจากผนังที่มองเห็นตอนนอนหรือตอนทำงาน','ระดับ 1','บทที่ 8 · Attaianese et al. (2025)'],['ใช้ผ้าสีเรียบหรือม่านคลุมผนังส่วนนั้น','ระดับ 1–2','บทที่ 8'],['ใช้วอลเปเปอร์แบบลอกออกได้สีเรียบ (ห้องเช่าต้องขออนุญาตก่อน)','ระดับ 2','บทที่ 8'],['ทาสีผนังใหม่เป็นสีอิ่มตัวต่ำ','ระดับ 3','บทที่ 8 · Abdou et al. (2026)']]},
+  lt:{short:'ปิดแสงที่เข้ามา',opts:[['ใช้ผ้าปิดตาตอนนอน','ระดับ 1','บทที่ 3'],['แปะเทปทึบแสงปิดไฟ LED ของเครื่องใช้','ระดับ 1','บทที่ 3'],['ติดม่านทึบแสงหรือฟิล์มกรองแสง','ระดับ 2','บทที่ 3 · Caddick et al. (2018)']]},
+  heat:{short:'กันความร้อน',opts:[['ปิดม่านด้านที่โดนแดดตั้งแต่ตอนบ่าย','ระดับ 1','บทที่ 5'],['เปิดแอร์ก่อนเข้านอน 15–30 นาที','ระดับ 1','บทที่ 5'],['ติดม่านกันความร้อนหรือฟิล์มกันร้อน','ระดับ 2','บทที่ 5 · Tsuzuki & Mori (2025)'],['ใช้ผ้าปูที่นอนเนื้อฝ้ายระบายความร้อนดี','ระดับ 2','บทที่ 5']]},
+  frg:{short:'ลดเสียงตู้เย็น',opts:[['ดึงตู้เย็นห่างผนังเล็กน้อยและรองแผ่นยางกันสั่น','ระดับ 1–2','บทที่ 4'],['แปะเทปปิดไฟ LED ของตู้เย็น','ระดับ 1','บทที่ 3'],['ใช้ที่อุดหูหรือเสียงกลบ','ระดับ 1–2','บทที่ 4']]},
+  side:{short:'เปิดทางข้างเตียง',opts:[['เก็บของที่วางข้างเตียงลงกล่องใต้เตียง','ระดับ 1','บทที่ 7'],['ติดไฟนำทางเซ็นเซอร์ตรงทางลงจากเตียง','ระดับ 2','บทที่ 9 · สำนักงานเขตบางพลัด (2568)'],['ถ้าเปลี่ยนเตียงในอนาคต เลือกขนาดเล็กลง','ระดับ 3','บทที่ 9']]},
+  door:{short:'เคลียร์ทางหน้าประตู',opts:[['ย้ายของชิ้นเล็กที่วางกองหน้าประตูออก','ระดับ 1','บทที่ 9'],['ติดไฟนำทางและแถบสีที่ขอบเฟอร์นิเจอร์กันชน','ระดับ 2','บทที่ 9'],['เปลี่ยนเฟอร์นิเจอร์ที่ขวางเป็นแบบพับเก็บได้','ระดับ 3','บทที่ 9']]},
+  ov:{short:'ของทับกัน',opts:[['ปรับขนาดหรือตำแหน่งในผังให้ตรงกับห้องจริง','—','']]},
+  out:{short:'อยู่นอกห้อง',opts:[['ลากกลับเข้าในห้อง หรือปรับขนาดห้อง','—','']]}
+};
+const fixOf=k=>{for(const p in FIXES)if(k.startsWith(p))return FIXES[p];return null};
+
+const S={W:300,L:400,items:[],after:null,view:'before',sel:null,checked:false,nid:1};
+const $=s=>document.querySelector(s);
+const clone=a=>a.map(o=>({...o}));
+const cur=()=>S.view==='after'&&S.after?S.after:S.items;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const T=it=>TYPES[it.type];
+const base=it=>({w:it.w??T(it).w,h:it.h??T(it).h});
+function dims(it){const t=T(it);if(t.kind==='mark')return{w:36,h:36};if(t.kind==='wall'){const len=it.w??t.w;return (it.side==='left'||it.side==='right')?{w:10,h:len}:{w:len,h:10}}const b=base(it);return (it.rot%180===90)?{w:b.h,h:b.w}:{w:b.w,h:b.h}}
+function box(it){const d=dims(it);return{x:it.x,y:it.y,w:d.w,h:d.h}}
+function cen(b){return{x:b.x+b.w/2,y:b.y+b.h/2}}
+const DIR={0:[0,-1],90:[1,0],180:[0,1],270:[-1,0]};
+const obstacle=i=>T(i).kind==='floor'&&T(i).cat!=='rug'&&!T(i).onTop;
+function inter(a,b,e=1){return a.x<b.x+b.w-e&&b.x<a.x+a.w-e&&a.y<b.y+b.h-e&&b.y<a.y+a.h-e}
+function inRoom(b){return b.x>=-1&&b.y>=-1&&b.x+b.w<=S.W+1&&b.y+b.h<=S.L+1}
+function ptBox(p,b){const dx=Math.max(b.x-p.x,0,p.x-(b.x+b.w)),dy=Math.max(b.y-p.y,0,p.y-(b.y+b.h));return Math.hypot(dx,dy)}
+function segBox(p,q,b){let t0=0,t1=1;const dx=q.x-p.x,dy=q.y-p.y;const P=[-dx,dx,-dy,dy],Q=[p.x-b.x,b.x+b.w-p.x,p.y-b.y,b.y+b.h-p.y];for(let i=0;i<4;i++){if(P[i]===0){if(Q[i]<0)return false}else{const t=Q[i]/P[i];if(P[i]<0){if(t>t1)return false;if(t>t0)t0=t}else{if(t<t0)return false;if(t<t1)t1=t}}}return true}
+function strip(it,D){const b=box(it);switch(it.side){case'top':return{x:b.x,y:0,w:b.w,h:D};case'bottom':return{x:b.x,y:S.L-D,w:b.w,h:D};case'left':return{x:0,y:b.y,w:D,h:b.h};default:return{x:S.W-D,y:b.y,w:D,h:b.h}}}
+function inner(it){const c=cen(box(it));switch(it.side){case'top':return{x:c.x,y:22};case'bottom':return{x:c.x,y:S.L-22};case'left':return{x:22,y:c.y};default:return{x:S.W-22,y:c.y}}}
+function headWall(it){const b=box(it);if(it.rot===0&&b.y<=1)return'top';if(it.rot===180&&b.y+b.h>=S.L-1)return'bottom';if(it.rot===90&&b.x+b.w>=S.W-1)return'right';if(it.rot===270&&b.x<=1)return'left';return null}
+function headPt(bed){const c=cen(box(bed)),d=DIR[bed.rot],h=base(bed).h/2;return{x:c.x+d[0]*h,y:c.y+d[1]*h}}
+function snapWall(it){const t=T(it),len=it.w??t.w,c=cen(box(it));const ds={top:c.y,bottom:S.L-c.y,left:c.x,right:S.W-c.x};const side=Object.keys(ds).sort((a,b)=>ds[a]-ds[b])[0];it.side=side;it.rot=0;if(side==='top'||side==='bottom'){it.x=clamp(Math.round(c.x-len/2),0,Math.max(0,S.W-len));it.y=side==='top'?-5:S.L-5}else{it.y=clamp(Math.round(c.y-len/2),0,Math.max(0,S.L-len));it.x=side==='left'?-5:S.W-5}}
+function clampIn(it){if(T(it).kind==='wall'){snapWall(it);return}const d=dims(it);it.x=clamp(it.x,0,Math.max(0,S.W-d.w));it.y=clamp(it.y,0,Math.max(0,S.L-d.h))}
+function seen(bed,target,obs){const hp=headPt(bed),f=DIR[(bed.rot+180)%360],rx=target.x-hp.x,ry=target.y-hp.y,len=Math.hypot(rx,ry)||1;if((rx*f[0]+ry*f[1])/len<=0.5)return false;return!obs.some(o=>T(o).blocker&&segBox(hp,target,box(o)))}
+
+function deskSees(desk,target){const d=DIR[desk.rot],dc=cen(box(desk)),off=base(desk).h/2+25,e={x:dc.x-d[0]*off,y:dc.y-d[1]*off},rx=target.x-e.x,ry=target.y-e.y,len=Math.hypot(rx,ry)||1;return(rx*d[0]+ry*d[1])/len>0.5}
+function evaluate(items){
+  const issues=[],goods=[];let score=0;
+  const obs=items.filter(obstacle);
+  const add=(sev,key,text,ref,ids,w,at)=>{issues.push({sev,key,text,ref,ids,at});score+=w};
+  const good=(text,ref)=>{goods.push({text,ref});score-=8};
+  obs.forEach(i=>{if(!inRoom(box(i)))add('bad','out'+i.id,T(i).label+' อยู่นอกห้อง','',[i.id],200,cen(box(i)))});
+  for(let a=0;a<obs.length;a++)for(let b=a+1;b<obs.length;b++){const A=obs[a],B=obs[b];const pair=[T(A).cat,T(B).cat].sort().join();if(pair==='chair,desk'||(pair==='chair,storage'&&[A,B].some(x=>x.type==='vanity')))continue;if(inter(box(A),box(B),2)){const ca=cen(box(A)),cb=cen(box(B));add('bad','ov'+A.id+'-'+B.id,T(A).label+' ทับกับ'+T(B).label,'บทที่ 9',[A.id,B.id],200,{x:(ca.x+cb.x)/2,y:(ca.y+cb.y)/2})}}
+  items.filter(i=>T(i).cat==='door').forEach(d=>{const z=strip(d,90);if(obs.some(f=>inter(box(f),z,2)))add('bad','door'+d.id,'หน้า'+T(d).label+'มีของขวาง ควรเว้นทางเดินอย่างน้อย 90 ซม.','บทที่ 9 · สำนักงานเขตบางพลัด (2568)',[d.id],200,cen(z))});
+  const bed=obs.find(i=>T(i).cat==='bed'),desk=obs.find(i=>T(i).cat==='desk');
+  if(bed){
+    const b=box(bed),hp=headPt(bed),hw=headWall(bed),vert=bed.rot%180===0;
+    const sides=vert?[{x:b.x-90,y:b.y,w:90,h:b.h},{x:b.x+b.w,y:b.y,w:90,h:b.h}]:[{x:b.x,y:b.y-90,w:b.w,h:90},{x:b.x,y:b.y+b.h,w:b.w,h:90}];
+    const free=s=>inRoom(s)&&!obs.some(f=>f!==bed&&!['night','chair','lamp','plant'].includes(T(f).cat)&&inter(box(f),s,2));
+    if(!sides.some(free)){const s=sides.find(x=>inRoom({...x,w:1,h:1}))||sides[0];add('warn','side','ข้างเตียงไม่มีพื้นที่ว่าง 90 ซม. เลยสักด้าน ลุกเดินลำบาก','บทที่ 9 · สำนักงานเขตบางพลัด (2568)',[bed.id],25,{x:clamp(cen(s).x,15,S.W-15),y:clamp(cen(s).y,15,S.L-15)})}
+    if(desk){const dc=cen(box(desk));if(seen(bed,dc,obs))add('warn','sees','นอนบนเตียงแล้วมองเห็นโต๊ะทำงาน','บทที่ 2 · Edinger et al. (2021)',[bed.id,desk.id],40,{x:(hp.x+dc.x)/2,y:(hp.y+dc.y)/2});else good('นอนบนเตียงแล้วมองไม่เห็นโต๊ะทำงาน','บทที่ 2')}
+    obs.filter(i=>T(i).cat==='screen').forEach(s=>{const c=cen(box(s));if(seen(bed,c,obs))add('warn','scr'+s.id,'นอนบนเตียงแล้วเห็นจอ'+T(s).short,'บทที่ 2–3 · Harvard Health Publishing (2020)',[bed.id,s.id],30,c)});
+    obs.filter(i=>T(i).cat==='clutter').forEach(s=>{const c=cen(box(s));if(seen(bed,c,obs))add('warn','clu'+s.id,'นอนบนเตียงแล้วเห็น'+T(s).label+' ซึ่งมักมีของกอง','บทที่ 7 · Thacher et al. (2017)',[bed.id,s.id],15,c)});
+    obs.filter(i=>T(i).cat==='fridge').forEach(s=>{if(ptBox(hp,box(s))<150)add('warn','frg'+s.id,'ตู้เย็นอยู่ใกล้หัวเตียง เสียงคอมเพรสเซอร์อาจรบกวน','บทที่ 4 · Caddick et al. (2018)',[bed.id,s.id],15,cen(box(s)))});
+    items.filter(i=>T(i).cat==='charger').forEach(c=>{if(ptBox(cen(box(c)),b)<120)add('warn','chg'+c.id,'จุดชาร์จมือถืออยู่ใกล้เตียง ชวนให้เล่นมือถือก่อนนอน','บทที่ 2 · Schrempft et al. (2024)',[c.id],15,cen(box(c)))});
+    items.filter(i=>T(i).cat==='window').forEach(w=>{const wb=box(w);const span=(w.side==='top'||w.side==='bottom')?(wb.x<b.x+b.w&&b.x<wb.x+wb.w):(wb.y<b.y+b.h&&b.y<wb.y+wb.h);if(hw&&w.side===hw&&span)add('warn','win'+w.id,'หัวเตียงอยู่ใต้หน้าต่าง รับแสงและเสียงจากข้างนอกโดยตรง','บทที่ 3–4 · Caddick et al. (2018)',[bed.id,w.id],20,inner(w))});
+    items.filter(i=>T(i).cat==='ac').forEach(a=>{if(inter(strip(a,250),b,2))add('warn','ac'+a.id,'ลมแอร์เป่าตรงเตียง','บทที่ 5',[bed.id,a.id],20,inner(a))});
+    items.filter(i=>T(i).cat==='door').forEach(d=>{if(inter(strip(d,250),b,2)&&!inter(strip(d,90),b,2))add('warn','dl'+d.id,'เตียงอยู่ตรงแนว'+T(d).label+' แสงและเสียงเข้าถึงง่าย','บทที่ 3–4',[bed.id,d.id],10,inner(d))});
+    const near=(cat,key,text,ref,w)=>items.filter(i=>T(i).cat===cat).forEach(n=>{const c=cen(box(n));if(Math.hypot(c.x-hp.x,c.y-hp.y)<110)add('warn',key+n.id,text,ref,[bed.id,n.id],w,c)});
+    near('noise','nz','หัวเตียงอยู่ใกล้ทิศที่มีเสียงดัง','บทที่ 4 · Caddick et al. (2018)',15);
+    near('noise2','pn','หัวเตียงอยู่ใกล้ทิศที่มีเสียงดังเป็นพัก ๆ','บทที่ 4 · Wang et al. (2021)',20);
+    near('stuffy','air','หัวเตียงอยู่ในจุดที่อากาศอับ','บทที่ 6 · Kang et al. (2024)',15);
+    items.filter(i=>T(i).cat==='led').forEach(n=>{const c=cen(box(n));if(seen(bed,c,obs)||Math.hypot(c.x-hp.x,c.y-hp.y)<150)add('warn','led'+n.id,'มีไฟ LED จากเครื่องใช้ในสายตาตอนนอน','บทที่ 3 · Brown et al. (2022)',[bed.id,n.id],10,c)});
+    items.filter(i=>T(i).cat==='mess').forEach(n=>{const c=cen(box(n));if(seen(bed,c,obs))add('warn','mess'+n.id,'นอนบนเตียงแล้วเห็นจุดที่ของมักกอง','บทที่ 7 · Thacher et al. (2017)',[bed.id,n.id],15,c)});
+    items.filter(i=>T(i).cat==='busy').forEach(n=>{const c=cen(box(n));if(seen(bed,c,obs))add('warn','patb'+n.id,'นอนบนเตียงแล้วเห็นผนังสีจัดหรือลายเยอะ','บทที่ 8 · Attaianese et al. (2025)',[bed.id,n.id],10,c)});
+    near('light','lt','หัวเตียงอยู่ใกล้ทิศที่แสงเข้า','บทที่ 3 · Brown et al. (2022)',10);
+    near('heat','heat','หัวเตียงอยู่ใกล้ผนังที่โดนแดดร้อน','บทที่ 5 · Tsuzuki & Mori (2025)',15);
+    if(items.some(i=>T(i).cat==='lamp'&&Math.hypot(cen(box(i)).x-hp.x,cen(box(i)).y-hp.y)<130))good('มีโคมไฟดวงเล็กใกล้เตียง ใช้แทนไฟเพดานช่วงก่อนนอน','บทที่ 3 · RIT (2018)');
+  }
+  if(desk){
+    const dc=cen(box(desk)),db=box(desk);
+    items.filter(i=>T(i).cat==='mess').forEach(n=>{const c=cen(box(n));if(deskSees(desk,c))add('warn','messd'+n.id,'นั่งที่โต๊ะแล้วเห็นจุดที่ของมักกอง','บทที่ 2 และ 7',[desk.id,n.id],10,{x:c.x,y:c.y+12})});
+    items.filter(i=>T(i).cat==='busy').forEach(n=>{const c=cen(box(n));if(deskSees(desk,c))add('warn','patd'+n.id,'นั่งที่โต๊ะแล้วเห็นผนังสีจัดหรือลายเยอะ','บทที่ 8 · Attaianese et al. (2025)',[desk.id,n.id],10,{x:c.x,y:c.y+12})});
+    if(items.some(i=>T(i).cat==='window'&&ptBox(dc,box(i))<150))good('โต๊ะอยู่ใกล้หน้าต่าง ได้แสงธรรมชาติตอนกลางวัน','บทที่ 3 · Brown et al. (2022)');
+    if(headWall(desk))good('นั่งที่โต๊ะแล้วหันหน้าเข้าผนัง สิ่งรบกวนในสายตาน้อย','บทที่ 2 และ 7');
+    if(items.some(i=>T(i).cat==='lamp'&&ptBox(cen(box(i)),db)<60))good('มีโคมไฟที่โต๊ะ ไม่ต้องเปิดไฟทั้งห้องตอนทำงาน','บทที่ 3');
+    if(obs.some(i=>T(i).cat==='plant'&&ptBox(cen(box(i)),db)<150))good('มีต้นไม้ใกล้โต๊ะ ช่วยพักสายตาระหว่างทำงาน','บทที่ 8 · Kaplan (1995) งานนอก');
+  }
+  if(obs.some(i=>T(i).cat==='seat'))good('มีที่นั่งพักนอกเตียง ไม่ต้องใช้เตียงทำกิจกรรมอื่น','บทที่ 2 · Edinger et al. (2021)');
+  return{issues,goods,score};
+}
+
+function wallCands(it){const b=base(it),out=[];const xs=n=>{const a=[];for(let v=0;v<=n;v+=25)a.push(v);if(n>=0&&a[a.length-1]!==n)a.push(n);return a};
+  [0,90,180,270].forEach(rot=>{const w=rot%180?b.h:b.w,h=rot%180?b.w:b.h;if(w>S.W||h>S.L)return;
+    if(rot===0)xs(S.W-w).forEach(x=>out.push({x,y:0,rot}));
+    if(rot===180)xs(S.W-w).forEach(x=>out.push({x,y:S.L-h,rot}));
+    if(rot===90)xs(S.L-h).forEach(y=>out.push({x:S.W-w,y,rot}));
+    if(rot===270)xs(S.L-h).forEach(y=>out.push({x:0,y,rot}));});return out}
+function moveCost(a,b){const ca=cen(box(a)),cb=cen(box(b));return Math.hypot(ca.x-cb.x,ca.y-cb.y)*0.04+(a.rot!==b.rot?3:0)}
+function placeChair(chair,desk){const f=DIR[(desk.rot+180)%360],dc=cen(box(desk)),off=base(desk).h/2+10,cd=dims({...chair,rot:desk.rot});chair.rot=desk.rot;chair.x=Math.round(dc.x+f[0]*off-cd.w/2);chair.y=Math.round(dc.y+f[1]*off-cd.h/2);clampIn(chair)}
+function ok(set,it){const b=box(it);if(!inRoom(b))return false;if(set.some(f=>f!==it&&obstacle(f)&&f.id!==it.id&&(()=>{const p=[T(f).cat,T(it).cat].sort().join();return p!=='chair,desk'&&inter(box(f),b,2)})()))return false;return!set.some(d=>T(d).cat==='door'&&inter(strip(d,90),b,2))}
+
+function suggest(src){
+  const items=clone(src),orig=Object.fromEntries(src.map(i=>[i.id,i]));
+  const isMov=i=>!i.fixed&&obstacle(i);
+  const bed=items.find(i=>T(i).cat==='bed'&&obstacle(i)),desk=items.find(i=>T(i).cat==='desk');
+  const chair=items.find(i=>T(i).cat==='chair'&&isMov(i));
+  const placed=items.filter(i=>!isMov(i)&&T(i).kind!=='floor'||i.fixed&&obstacle(i));
+  const sc=set=>evaluate(set).score;
+  let bedC=[null];
+  if(bed&&isMov(bed))bedC=wallCands(bed).map(c=>({...bed,...c})).map(b=>({b,s:sc([...placed,b])+moveCost(b,orig[bed.id])})).sort((a,b)=>a.s-b.s).slice(0,14).map(o=>o.b);else if(bed)bedC=[bed];
+  let best=null;
+  bedC.forEach(b=>{let deskC=[null];if(desk&&isMov(desk))deskC=wallCands(desk).map(c=>({...desk,...c}));else if(desk)deskC=[desk];
+    deskC.forEach(d=>{const set=[...placed];if(b)set.push(b);if(d)set.push(d);let ch=null;if(chair&&d&&isMov(desk)){ch={...chair};placeChair(ch,d);set.push(ch)}
+      const s=sc(set)+(b&&isMov(bed)?moveCost(b,orig[bed.id]):0)+(d&&isMov(desk)?moveCost(d,orig[desk.id]):0);
+      if(!best||s<best.s)best={s,b,d,ch}})});
+  let out=items.map(i=>best&&[best.b,best.d,best.ch].find(x=>x&&x.id===i.id)||i);
+  const done=new Set(out.filter(i=>!isMov(i)).map(i=>i.id));if(best)[best.b,best.d,best.ch].forEach(x=>x&&done.add(x.id));
+  const nb=out.find(i=>T(i).cat==='bed'&&obstacle(i));
+  out.filter(i=>T(i).cat==='night'&&isMov(i)).forEach(n=>{if(!nb){return}const b=box(nb),d=dims({...n,rot:nb.rot});let cs=[];
+    if(nb.rot===0)cs=[{x:b.x-d.w,y:b.y},{x:b.x+b.w,y:b.y}];if(nb.rot===180)cs=[{x:b.x-d.w,y:b.y+b.h-d.h},{x:b.x+b.w,y:b.y+b.h-d.h}];
+    if(nb.rot===90)cs=[{x:b.x+b.w-d.w,y:b.y-d.h},{x:b.x+b.w-d.w,y:b.y+b.h}];if(nb.rot===270)cs=[{x:b.x,y:b.y-d.h},{x:b.x,y:b.y+b.h}];
+    const set=out.filter(i=>done.has(i.id));const c=cs.find(c=>ok(set,{...n,...c,rot:nb.rot}));if(c){n.x=c.x;n.y=c.y;n.rot=nb.rot;done.add(n.id)}});
+  const area=i=>base(i).w*base(i).h;
+  out.filter(i=>isMov(i)&&!done.has(i.id)&&!T(i).partition).sort((a,b)=>area(b)-area(a)).forEach(i=>{
+    const set=out.filter(o=>done.has(o.id));set.push(i);const idx=set.length-1;
+    const involved=evaluate(set).issues.some(x=>x.ids.includes(i.id));
+    if(ok(set,i)&&!involved){done.add(i.id);return}
+    let bestP=null;[{x:orig[i.id].x,y:orig[i.id].y,rot:orig[i.id].rot},...wallCands(i)].forEach(c=>{const t={...i,...c};set[idx]=t;if(ok(set,t)){const s=sc(set)+moveCost(t,orig[i.id]);if(!bestP||s<bestP.s)bestP={...c,s}}});
+    if(bestP){i.x=bestP.x;i.y=bestP.y;i.rot=bestP.rot}done.add(i.id)});
+  out.filter(i=>isMov(i)&&!done.has(i.id)&&T(i).partition).forEach(i=>{
+    const set=out.filter(o=>done.has(o.id));set.push(i);const idx=set.length-1;const o0=orig[i.id];
+    let bestP={x:i.x,y:i.y,rot:i.rot,s:ok(set,i)?sc(set):1e9};
+    for(const rot of [0,90])for(let x=0;x<=S.W;x+=25)for(let y=0;y<=S.L;y+=25){const t={...i,x,y,rot};set[idx]=t;if(ok(set,t)){const s=sc(set)+moveCost(t,o0)*0.5;if(s<bestP.s)bestP={x,y,rot,s}}}
+    i.x=bestP.x;i.y=bestP.y;i.rot=bestP.rot;done.add(i.id)});
+  const after=Object.fromEntries(out.map(i=>[i.id,i]));
+  src.filter(i=>T(i).onTop).forEach(l=>{const lc=cen(box(l));const host=src.find(h=>obstacle(h)&&ptBox(lc,box(h))===0);const L=after[l.id];if(host&&!l.fixed){const a=cen(box(orig[host.id])),b=cen(box(after[host.id]));L.x=Math.round(l.x+b.x-a.x);L.y=Math.round(l.y+b.y-a.y);clampIn(L)}});
+  src.filter(i=>T(i).cat==='rug'&&!i.fixed).forEach(r=>{const ob=src.find(i=>T(i).cat==='bed');if(ob&&inter(box(r),box(ob))){const a=cen(box(ob)),b=cen(box(after[ob.id]));const R=after[r.id];R.x=Math.round(r.x+b.x-a.x);R.y=Math.round(r.y+b.y-a.y);clampIn(R)}});
+  const nd=out.find(i=>T(i).cat==='desk');
+  out.filter(i=>T(i).cat==='charger'&&!i.fixed).forEach(c=>{if(!nb||ptBox(cen(box(c)),box(nb))>=120)return;if(nd&&ptBox(cen(box(nd)),box(nb))>=120){const dc=cen(box(nd));c.x=Math.round(dc.x-18);c.y=Math.round(dc.y-18)}else{let far=null;for(let x=0;x<=S.W-36;x+=25)for(let y=0;y<=S.L-36;y+=25){const d=ptBox({x:x+18,y:y+18},box(nb));if(!far||d>far.d)far={x,y,d}}if(far){c.x=far.x;c.y=far.y}}});
+  return out;
+}
+
+function planSteps(before,after){
+  const steps=[];const B=Object.fromEntries(before.map(i=>[i.id,i]));
+  after.forEach(a=>{const b=B[a.id];if(!b)return;if(!(Math.hypot(a.x-b.x,a.y-b.y)>5||a.rot!==b.rot))return;const t=T(a),cat=t.cat;let s;
+    if(cat==='bed'){const hw=headWall(a);s='ย้ายเตียงให้หัวเตียงชิด'+(hw?WALLNAME[hw]:'ผนัง')}
+    else if(cat==='desk'){const fw=headWall(a);s='ย้ายโต๊ะทำงานไปชิด'+(fw?WALLNAME[fw]:'ผนัง')+' นั่งแล้วหันหน้าเข้าผนัง'}
+    else if(cat==='chair')s='วางเก้าอี้ไว้หน้าโต๊ะ';
+    else if(cat==='night')s='วางโต๊ะข้างเตียงไว้ข้างหัวเตียง';
+    else if(cat==='charger')s='ย้ายจุดชาร์จมือถือไปไว้ที่โต๊ะ ห่างจากเตียง';
+    else if(t.onTop)s='ย้าย'+t.label+'ตามโต๊ะที่วางอยู่';
+    else if(cat==='rug')s='ย้ายพรมตามเตียง';
+    else if(t.partition){const bd=after.find(i=>T(i).cat==='bed'),dk=after.find(i=>T(i).cat==='desk');s=(bd&&dk&&segBox(headPt(bd),cen(box(dk)),box(a)))?'ใช้'+t.label+'กั้นสายตาระหว่างเตียงกับโต๊ะ':'ย้าย'+t.label}
+    else if(cat==='screen')s='ย้าย'+t.label+'ให้พ้นสายตาจากเตียง';
+    else if(cat==='clutter')s='ย้าย'+t.label+'ให้พ้นสายตาจากเตียง';
+    else if(cat==='fridge')s='ย้ายตู้เย็นให้ห่างหัวเตียง';
+    else s='ย้าย'+t.label+'ชิดผนัง ให้ไม่ขวางทางเดิน';
+    steps.push({s,order:{bed:1,desk:2,chair:3,night:4,part:5,screen:6,clutter:7,fridge:8,charger:9}[cat]||10})});
+  return steps.sort((a,b)=>a.order-b.order);
+}
+
+const svg=$('#svg');let drag=null;
+function pins(ev){return ev.issues.map((i,k)=>({...i,n:k+1}))}
+function render(){
+  const W=S.W,L=S.L,P=48;svg.setAttribute('viewBox',`${-P} ${-P} ${W+2*P} ${L+2*P}`);
+  const ppc=(svg.clientWidth||600)/(W+2*P),fs=12/ppc,fsS=11/ppc,px=v=>v/ppc;
+  const items=cur(),ev=evaluate(items),flagged=new Set();if(S.checked)ev.issues.forEach(i=>i.ids.forEach(id=>flagged.add(id)));
+  let g='';
+  for(let x=0;x<=W;x+=25)g+=`<line x1="${x}" y1="0" x2="${x}" y2="${L}" stroke="${x%100?'#ECE8DF':'#DCD7CB'}" stroke-width="${px(1)}"/>`;
+  for(let y=0;y<=L;y+=25)g+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="${y%100?'#ECE8DF':'#DCD7CB'}" stroke-width="${px(1)}"/>`;
+  g+=`<rect x="0" y="0" width="${W}" height="${L}" fill="none" stroke="#3B3D42" stroke-width="${px(4)}"/>`;
+  g+=`<text x="${W/2}" y="${-P/2+4}" font-size="${fsS}" text-anchor="middle" fill="#6B6F76">ผนัง ก · ${(W/100).toFixed(2)} ม.</text>`;
+  g+=`<text x="${W/2}" y="${L+P/2+4}" font-size="${fsS}" text-anchor="middle" fill="#6B6F76">ผนัง ค</text>`;
+  g+=`<text x="${-P/2}" y="${L/2}" font-size="${fsS}" text-anchor="middle" fill="#6B6F76" transform="rotate(-90 ${-P/2} ${L/2})">ผนัง ง · ${(L/100).toFixed(2)} ม.</text>`;
+  g+=`<text x="${W+P/2}" y="${L/2}" font-size="${fsS}" text-anchor="middle" fill="#6B6F76" transform="rotate(90 ${W+P/2} ${L/2})">ผนัง ข</text>`;
+  if(S.checked)items.filter(i=>T(i).cat==='door').forEach(d=>{const z=strip(d,90);g+=`<rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="#3F6E8C" opacity=".08"/>`});
+  const order=i=>T(i).cat==='rug'?0:T(i).onTop?2:({floor:1,wall:3,mark:4})[T(i).kind];
+  [...items].sort((a,b)=>order(a)-order(b)).forEach(it=>{const t=T(it),b=box(it),c=cen(b),sel=S.sel===it.id,bad=flagged.has(it.id);
+    const sw=px(sel?3:1.5),stroke=sel?'#24262B':bad?'#B2442F':t.stroke;let s=`<g data-id="${it.id}" style="cursor:grab">`;
+    if(t.kind==='mark'){s+=`<circle cx="${c.x}" cy="${c.y}" r="18" fill="${t.fill}" stroke="${stroke}" stroke-width="${sw}"/><text x="${c.x}" y="${c.y}" font-size="${fsS}" text-anchor="middle" dominant-baseline="central" fill="${t.stroke}">${t.short}</text>`}
+    else if(t.kind==='wall'){s+=`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="${t.fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      if(t.cat==='door'){const D=it.w??t.w;let p;if(it.side==='top')p=`M${b.x} 0 L${b.x} ${D} A${D} ${D} 0 0 0 ${b.x+D} 0`;else if(it.side==='bottom')p=`M${b.x} ${L} L${b.x} ${L-D} A${D} ${D} 0 0 1 ${b.x+D} ${L}`;else if(it.side==='left')p=`M0 ${b.y} L${D} ${b.y} A${D} ${D} 0 0 1 0 ${b.y+D}`;else p=`M${W} ${b.y} L${W-D} ${b.y} A${D} ${D} 0 0 0 ${W} ${b.y+D}`;s+=`<path d="${p}" fill="none" stroke="${stroke}" stroke-width="${px(1.2)}" stroke-dasharray="${px(4)} ${px(3)}"/>`}
+      if(t.cat==='window'){const v=it.side==='left'||it.side==='right';s+=v?`<line x1="${c.x}" y1="${b.y}" x2="${c.x}" y2="${b.y+b.h}" stroke="${t.stroke}" stroke-width="${px(1)}"/>`:`<line x1="${b.x}" y1="${c.y}" x2="${b.x+b.w}" y2="${c.y}" stroke="${t.stroke}" stroke-width="${px(1)}"/>`}
+      const lx=it.side==='left'?c.x+14:it.side==='right'?c.x-14:c.x,ly=it.side==='top'?c.y+16:it.side==='bottom'?c.y-12:c.y;
+      s+=`<text x="${lx}" y="${ly}" font-size="${fsS}" text-anchor="${it.side==='left'?'start':it.side==='right'?'end':'middle'}" dominant-baseline="central" fill="${t.stroke}">${t.short}</text>`}
+    else{const round=['lamp','plant','seat'].includes(t.cat)&&it.type!=='sofa';
+      s+=`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="${round?Math.min(b.w,b.h)/2:4}" fill="${t.fill}" ${t.cat==='rug'?'fill-opacity=".7"':''} stroke="${stroke}" stroke-width="${sw}" ${it.fixed?`stroke-dasharray="${px(6)} ${px(4)}"`:''} ${t.cat==='rug'?`stroke-dasharray="${px(3)} ${px(3)}"`:''}/>`;
+      if(t.cat==='bed'){const d=DIR[it.rot],pw=28;let pr;if(d[1]===-1)pr={x:b.x+8,y:b.y+6,w:b.w-16,h:pw};else if(d[1]===1)pr={x:b.x+8,y:b.y+b.h-6-pw,w:b.w-16,h:pw};else if(d[0]===1)pr={x:b.x+b.w-6-pw,y:b.y+8,w:pw,h:b.h-16};else pr={x:b.x+6,y:b.y+8,w:pw,h:b.h-16};s+=`<rect x="${pr.x}" y="${pr.y}" width="${Math.max(0,pr.w)}" height="${Math.max(0,pr.h)}" rx="6" fill="#fff" stroke="${t.stroke}" stroke-width="${px(1)}"/>`}
+      if(t.cat==='desk'||it.type==='vanity'||t.cat==='screen'||t.cat==='seat'&&it.type==='sofa'){const d=DIR[it.rot];const fx=c.x-d[0]*(b.w/2-px(5)),fy=c.y-d[1]*(b.h/2-px(5));s+=`<circle cx="${fx}" cy="${fy}" r="${px(3)}" fill="${t.stroke}"/>`}
+      const lbl=b.w<px(40)&&b.h<px(40)?'':t.short;
+      if(lbl)s+=`<text x="${c.x}" y="${c.y}" font-size="${t.onTop?fsS:fs}" text-anchor="middle" dominant-baseline="central" fill="${t.stroke}" font-weight="500">${lbl}</text>`;
+      if(sel){const bs=base(it);s+=`<text x="${c.x}" y="${c.y+fs*1.25}" font-size="${fsS}" text-anchor="middle" dominant-baseline="central" fill="#24262B">${bs.w}×${bs.h} ซม.</text>`}
+      else if(it.fixed)s+=`<text x="${c.x}" y="${c.y+fs*1.2}" font-size="${fsS*0.9}" text-anchor="middle" dominant-baseline="central" fill="#6B6F76">ย้ายไม่ได้</text>`;
+      if(sel){const hs=px(18);s+=`<rect data-handle="1" x="${b.x+b.w-hs/2}" y="${b.y+b.h-hs/2}" width="${hs}" height="${hs}" rx="${px(3)}" fill="#24262B" style="cursor:nwse-resize"/>`}}
+    s+='</g>';g+=s});
+  if(S.checked){const used=[];pins(ev).forEach(p=>{const f=fixOf(p.key);if(!f||!p.at)return;let {x,y}=p.at;x=clamp(x,0,W);y=clamp(y,0,L);while(used.some(u=>Math.hypot(u.x-x,u.y-y)<px(30)))y+=px(28);used.push({x,y});
+    const r=px(11),txt=f.short,tw=txt.length*px(7.2)+px(14),right=x+r+px(4)+tw<W+P;const lx=right?x+r+px(4):x-r-px(4)-tw;
+    g+=`<g pointer-events="none"><rect x="${lx}" y="${y-px(11)}" width="${tw}" height="${px(22)}" rx="${px(11)}" fill="#fff" stroke="#D9822B" stroke-width="${px(1)}" opacity=".95"/><text x="${lx+tw/2}" y="${y}" font-size="${fsS}" text-anchor="middle" dominant-baseline="central" fill="#8A4A10">${txt}</text><circle cx="${x}" cy="${y}" r="${r}" fill="#D9822B" stroke="#fff" stroke-width="${px(2)}"/><text x="${x}" y="${y}" font-size="${fsS}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-weight="600">${p.n}</text></g>`})}
+  svg.innerHTML=g;renderToolbar();renderPanel(ev);renderSteps();
+}
+function renderToolbar(){const tb=$('#toolbar');const it=cur().find(i=>i.id===S.sel);if(!it){tb.innerHTML='<span class="hint">แตะของในห้องเพื่อเลือก ลากเพื่อย้าย ลากมุมสีเข้มเพื่อยืดหดขนาด</span>';return}const t=T(it);let h=`<span class="name">${t.label}</span>`;
+  if(t.kind==='floor'){const b=base(it);const lab=t.cat==='bed'?['กว้าง','ยาว']:['กว้าง','ลึก'];h+=`<label class="f">${lab[0]} <input type="number" id="iw" min="10" max="800" step="5" value="${b.w}"> ซม.</label><label class="f">${lab[1]} <input type="number" id="ih" min="10" max="800" step="5" value="${b.h}"> ซม.</label><button data-a="rot">หมุน 90°</button><button data-a="fix" aria-pressed="${!!it.fixed}">${it.fixed?'ปลดล็อก':'ย้ายไม่ได้'}</button>`}
+  if(t.kind==='wall')h+=`<label class="f">ความกว้าง <input type="number" id="iw" min="20" max="800" step="5" value="${it.w??t.w}"> ซม.</label>`;
+  h+=`<button data-a="dup">ทำซ้ำ</button><button data-a="del">ลบ</button>`;
+  if(t.cat==='bed')h+='<span class="hint">ด้านที่มีหมอนคือหัวเตียง</span>';else if(t.cat==='desk'||t.cat==='screen'||it.type==='vanity'||it.type==='sofa')h+='<span class="hint">จุดคือด้านหน้า</span>';
+  tb.innerHTML=h;
+  const iw=$('#iw'),ih=$('#ih');const apply=()=>{const v=k=>clamp(Math.round((+k.value||10)/5)*5,10,800);if(iw)it.w=v(iw);if(ih)it.h=v(ih);clampIn(it);render()};if(iw)iw.addEventListener('change',apply);if(ih)ih.addEventListener('change',apply)}
+function renderSteps(){const s=S.after?4:S.checked?3:cur().length?2:1;document.querySelectorAll('#steps li').forEach(li=>li.classList.toggle('on',+li.dataset.s===s));
+  const seg=$('#viewseg');seg.hidden=!S.after;seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view))}
+function fixBlock(key,open){const f=fixOf(key);if(!f||f.opts[0][1]==='—')return'';return`<details ${open?'open':''}><summary>วิธีแก้โดยไม่ต้องย้ายเฟอร์นิเจอร์ (${f.opts.length})</summary><ul class="fix">${f.opts.map(o=>`<li>${o[0]}<span class="lvl">${o[1]}</span>${o[2]?`<span class="ref">${o[2]}</span>`:''}</li>`).join('')}</ul></details>`}
+function renderPanel(ev){const p=$('#panel');let h='';
+  if(!S.checked&&!S.after){p.innerHTML=`<h2>ผลการตรวจ</h2><p class="empty">วางเตียง โต๊ะ ประตู หน้าต่าง และสิ่งเร้าในห้องให้ครบ ปรับขนาดให้ใกล้ของจริง แล้วกด "ตรวจห้องตามคู่มือ"</p><h3>ระบบตรวจอะไรบ้าง</h3><ul class="res">${['ทางเดินหน้าประตูและข้างเตียง (บทที่ 9)','นอนแล้วมองเห็นโต๊ะ ทีวี หรือกองผ้าไหม (บทที่ 2 และ 7)','จุดชาร์จมือถือใกล้เตียงไหม (บทที่ 2)','แสง ไฟ LED เสียงต่อเนื่องและเป็นพัก ๆ ความร้อน ลมแอร์ ตู้เย็น ใกล้หัวเตียง (บทที่ 3–5)','จุดอากาศอับ (บทที่ 6) จุดของกอง และผนังสีจัดในสายตา (บทที่ 7–8)','มีโคมไฟ ที่นั่งนอกเตียง และต้นไม้ไหม (บทที่ 2, 3, 8)'].map(t=>`<li style="background:#F2F0EA">${t}</li>`).join('')}</ul>`;return}
+  const list=pins(ev),isAfter=S.view==='after'&&S.after;
+  h+=`<h2>${isAfter?'ผลตรวจแบบที่แนะนำ':'ผลตรวจห้องของฉัน'}</h2>`;
+  if(isAfter){const steps=planSteps(S.items,S.after);const evB=evaluate(S.items);const fixed=evB.issues.filter(i=>!ev.issues.some(j=>j.key===i.key));
+    h+=`<h3>ย้ายเฟอร์นิเจอร์ (ระดับ 1 · ไม่ใช้งบ)</h3>`+(steps.length?`<ol class="plan">${steps.map(s=>`<li>${s.s}</li>`).join('')}</ol>`:'<p class="empty">ไม่ต้องย้ายเฟอร์นิเจอร์</p>');
+    if(fixed.length)h+=`<h3>สิ่งที่ดีขึ้นจากการย้าย</h3><ul class="res">${fixed.map(i=>`<li class="good"><span class="tag">แก้แล้ว</span>${i.text}</li>`).join('')}</ul>`;
+    h+=`<h3>${list.length?'จุดที่ยังต้องแก้ (ตัวเลขตรงกับบนผัง)':'ไม่มีจุดที่ต้องแก้เพิ่ม'}</h3>`}
+  else h+=`<p class="sum">${list.length?`พบ ${list.length} เรื่องที่ควรปรับ ตัวเลขตรงกับบนผัง`:'ไม่พบเรื่องที่ต้องปรับจากการจัดวาง'}</p>`;
+  h+='<ul class="res">';
+  list.forEach(i=>h+=`<li class="${i.sev}"><span class="num">${i.n}</span><span class="tag">${i.sev==='bad'?'ต้องแก้':'ควรปรับ'}</span>${i.text}${i.ref?`<span class="ref">${i.ref}</span>`:''}${fixBlock(i.key,isAfter)}</li>`);
+  h+='</ul>';
+  if(ev.goods.length)h+=`<h3>สิ่งที่ดีอยู่แล้ว</h3><ul class="res">${ev.goods.map(g=>`<li class="good"><span class="tag">ดีแล้ว</span>${g.text}<span class="ref">${g.ref}</span></li>`).join('')}</ul>`;
+  if(isAfter)h+=`<div class="row" style="margin-top:12px"><button id="use">ใช้แบบที่แนะนำเป็นห้องของฉัน</button></div><p class="hint" style="margin-top:8px">ในมุมมอง "หลัง" ลากหรือปรับขนาดต่อเองได้ ระบบตรวจใหม่ทันที</p>`;
+  p.innerHTML=h;const u=$('#use');if(u)u.onclick=()=>{S.items=clone(S.after);S.after=null;S.view='before';render()}}
+
+function pt(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+svg.addEventListener('pointerdown',e=>{const g=e.target.closest('[data-id]');if(!g){S.sel=null;render();return}const id=+g.dataset.id,it=cur().find(i=>i.id===id);S.sel=id;const p=pt(e);
+  drag=e.target.closest('[data-handle]')?{it,mode:'resize'}:{it,mode:'move',ox:p.x-it.x,oy:p.y-it.y};svg.setPointerCapture(e.pointerId);e.preventDefault();render()});
+svg.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e),it=drag.it;
+  if(drag.mode==='move'){it.x=Math.round((p.x-drag.ox)/5)*5;it.y=Math.round((p.y-drag.oy)/5)*5}
+  else{const ew=clamp(Math.round((p.x-it.x)/5)*5,15,S.W),eh=clamp(Math.round((p.y-it.y)/5)*5,10,S.L);if(it.rot%180===90){it.w=eh;it.h=ew}else{it.w=ew;it.h=eh}}
+  render()});
+const endDrag=()=>{if(!drag)return;clampIn(drag.it);drag=null;render()};svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);
+$('#toolbar').addEventListener('click',e=>{const a=e.target.dataset.a;if(!a)return;const items=cur(),it=items.find(i=>i.id===S.sel);if(!it)return;
+  if(a==='rot'){const c=cen(box(it));it.rot=(it.rot+90)%360;const d=dims(it);it.x=Math.round(c.x-d.w/2);it.y=Math.round(c.y-d.h/2);clampIn(it)}
+  if(a==='fix')it.fixed=!it.fixed;
+  if(a==='dup'){const n={...it,id:S.nid++,x:it.x+25,y:it.y+25};clampIn(n);items.push(n);S.sel=n.id}
+  if(a==='del'){items.splice(items.indexOf(it),1);S.sel=null}render()});
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||S.sel==null)return;const it=cur().find(i=>i.id===S.sel);if(!it)return;const st=e.shiftKey?25:5;const m={ArrowLeft:[-st,0],ArrowRight:[st,0],ArrowUp:[0,-st],ArrowDown:[0,st]}[e.key];
+  if(m){it.x+=m[0];it.y+=m[1];if(T(it).kind==='wall'){const len=it.w??T(it).w;if(it.side==='top'||it.side==='bottom')it.x=clamp(it.x,0,S.W-len);else it.y=clamp(it.y,0,S.L-len);if(it.side==='top')it.y=-5;if(it.side==='bottom')it.y=S.L-5;if(it.side==='left')it.x=-5;if(it.side==='right')it.x=S.W-5}else clampIn(it);e.preventDefault();render()}
+  else if(e.key==='r'||e.key==='R'){$('#toolbar [data-a=rot]')?.click()}else if(e.key==='Delete'||e.key==='Backspace'){$('#toolbar [data-a=del]')?.click()}});
+function addItem(type){const items=cur(),t=TYPES[type],it={id:S.nid++,type,x:0,y:0,rot:0,fixed:false};
+  if(t.kind==='wall'){it.side='top';it.y=-5;for(let x=0;x<=S.W-t.w;x+=25){it.x=x;if(!items.some(o=>T(o).kind==='wall'&&o.side==='top'&&inter(box(o),box(it),1)))break}}
+  else{const d=dims(it);let placed=false;for(let y=0;y<=S.L-d.h&&!placed;y+=25)for(let x=0;x<=S.W-d.w&&!placed;x+=25){it.x=x;it.y=y;if(t.kind==='mark'||t.cat==='rug'||t.onTop||ok(items,it))placed=true}if(!placed){it.x=Math.max(0,(S.W-d.w)/2);it.y=Math.max(0,(S.L-d.h)/2)}}
+  items.push(it);S.sel=it.id;render()}
+function buildPalette(){$('#palette').innerHTML=GROUPS.map(([g,ts])=>`<div class="grp">${g}</div><div class="chips">${ts.map(k=>`<button class="chip" data-add="${k}"><span class="dot" style="background:${TYPES[k].fill};border-color:${TYPES[k].stroke}"></span>${TYPES[k].label}</button>`).join('')}</div>`).join('');
+  $('#palette').addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(b)addItem(b.dataset.add)})}
+function setSize(){S.W=Math.round(clamp(+$('#w').value||3,2,8)*100);S.L=Math.round(clamp(+$('#l').value||4,2,8)*100);[S.items,S.after].forEach(a=>a&&a.forEach(clampIn));render()}
+$('#w').addEventListener('change',setSize);$('#l').addEventListener('change',setSize);
+$('#check').onclick=()=>{S.checked=true;render();$('#panel').scrollIntoView({behavior:'smooth',block:'nearest'})};
+$('#suggest').onclick=()=>{if(!S.items.some(i=>T(i).cat==='bed')){S.checked=true;render();$('#panel').innerHTML='<h2>ยังเสนอไม่ได้</h2><p class="empty">วางเตียงในห้องก่อน แล้วลองอีกครั้ง</p>';return}S.checked=true;S.after=suggest(S.items);S.view='after';S.sel=null;render()};
+$('#viewseg').addEventListener('click',e=>{const v=e.target.dataset.v;if(v){S.view=v;S.sel=null;render()}});
+$('#clear').onclick=()=>{S.items=[];S.after=null;S.view='before';S.checked=false;S.sel=null;render()};
+function demoItems(){S.nid=1;const mk=(type,o)=>({id:S.nid++,type,rot:0,fixed:false,...o});
+  return[mk('window',{x:90,y:-5,side:'top'}),mk('ac',{x:-5,y:120,side:'left'}),mk('door',{x:20,y:395,side:'bottom'}),mk('bathdoor',{x:295,y:330,side:'right',w:70}),
+    mk('rug',{x:70,y:150,w:160,h:110}),mk('bed5',{x:75,y:0}),mk('night',{x:230,y:0}),mk('tablelamp',{x:240,y:8}),
+    mk('desk',{x:150,y:340,rot:180}),mk('chair',{x:185,y:290,rot:180}),mk('wardrobe',{x:240,y:205,rot:90,w:110,fixed:true}),
+    mk('rack',{x:20,y:240,w:90}),mk('fridge',{x:0,y:60,w:45,h:50}),mk('plant',{x:250,y:120}),
+    mk('charger',{x:38,y:8}),mk('noise',{x:190,y:45}),mk('light',{x:114,y:6}),mk('heat',{x:0,y:185}),mk('led',{x:8,y:110})]}
+$('#demo').onclick=()=>{$('#w').value=3;$('#l').value=4;S.W=300;S.L=400;S.items=demoItems();S.after=null;S.view='before';S.checked=false;S.sel=null;render()};
+window.addEventListener('resize',()=>render());
+buildPalette();$('#demo').click();
+</script>
+</body>
+</html>
